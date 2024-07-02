@@ -1,0 +1,34 @@
+﻿<ui:FluentWindow x:Class="WWGachaExport.Views.UpdateGachaDataWindow"
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:WWGachaExport.Views"
+                 xmlns:helpers="clr-namespace:WWGachaExport.Helpers"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 helpers:DialogResultHelper.DialogResult="{Binding DialogResult}"
+                 mc:Ignorable="d"
+                 DataContext="{Binding Source={StaticResource Locator}, Path=UpdateGachaDataWindow}"
+                 Title="UpdateGachaDataWindow" Height="400" Width="400"
+                 WindowStartupLocation="CenterOwner"
+                 ResizeMode="NoResize">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <ui:TitleBar
+            x:Name="TitleBar"
+            Title="更新记录"
+            ShowMinimize="False"
+            ShowMaximize="False"
+            CloseWindowByDoubleClickOnIcon="True">
+            <ui:TitleBar.Icon>
+                <ui:ImageIcon Source="pack://application:,,,/Assets/Icon.png" />
+            </ui:TitleBar.Icon>
+        </ui:TitleBar>
+        <ScrollViewer Grid.Row="1">
+            <TextBlock Margin="5" Text="{Binding LogText}" />
+        </ScrollViewer>
+    </Grid>
+</ui:FluentWindow>
