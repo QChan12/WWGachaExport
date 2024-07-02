@@ -48,7 +48,7 @@
             <ui:ToggleSwitch Grid.Row="2" Grid.Column="1" Margin="4" VerticalAlignment="Center" OffContent="关闭" OnContent="开启" IsChecked="{Binding IgnoreNoobPool}"/>
 
 
-            <TextBlock Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Text="www.github.com"/>
+            <TextBlock Grid.Row="4" Grid.ColumnSpan="3" HorizontalAlignment="Center" VerticalAlignment="Center" Text="https://github.com/QChan12/WWGachaExport"/>
         </Grid>
     </Grid>
 </ui:FluentWindow>
