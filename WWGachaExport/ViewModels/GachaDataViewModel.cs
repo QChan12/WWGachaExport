@@ -165,6 +165,8 @@ namespace WWGachaExport.ViewModels
         {
             get
             {
+                if (this.TotalCount == 0)
+                    return "[0.00%]";
                 return $"[{Math.Round((float)this.LevelFiveCount / this.TotalCount * 100f, 2)}%]";
             }
         }
@@ -173,6 +175,8 @@ namespace WWGachaExport.ViewModels
         {
             get
             {
+                if (this.TotalCount == 0)
+                    return "[0.00%]";
                 return $"[{Math.Round((float)this.LevelFourCount / this.TotalCount * 100f, 2)}%]";
             }
         }
@@ -181,6 +185,8 @@ namespace WWGachaExport.ViewModels
         {
             get
             {
+                if (this.TotalCount == 0)
+                    return "[0.00%]";
                 return $"[{Math.Round((float)this.LevelThreeCount / this.TotalCount * 100f, 2)}%]";
             }
         }
