@@ -75,7 +75,7 @@ namespace WWGachaExport.ViewModels
                 var count = 0;
                 foreach (var data in this.GachaData.Reverse())
                 {
-                    if (data.QualityLevel == 4)
+                    if (data.QualityLevel == 4 || data.QualityLevel == 5)
                         break;
 
                     count++;

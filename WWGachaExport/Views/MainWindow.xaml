@@ -7,7 +7,7 @@
         xmlns:Controls="clr-namespace:WWGachaExport.Controls"
         xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
         mc:Ignorable="d"
-        Title="MainWindow" Height="550" Width="900"
+        Title="鸣潮抽卡导出工具 v0.0.2" Height="550" Width="900"
         DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
         ExtendsContentIntoTitleBar="True"
         WindowStartupLocation="CenterScreen">
@@ -19,7 +19,7 @@
         </Grid.RowDefinitions>
         <ui:TitleBar
             x:Name="TitleBar"
-            Title="鸣潮抽卡导出工具 v0.0.1"
+            Title="鸣潮抽卡导出工具 v0.0.2"
             CloseWindowByDoubleClickOnIcon="True">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Assets/Icon.png" />

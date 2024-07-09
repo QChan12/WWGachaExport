@@ -9,7 +9,7 @@
                  helpers:DialogResultHelper.DialogResult="{Binding DialogResult}"
                  mc:Ignorable="d"
                  DataContext="{Binding Source={StaticResource Locator}, Path=UpdateGachaDataWindow}"
-                 Title="UpdateGachaDataWindow" Height="400" Width="400"
+                 Title="更新记录" Height="400" Width="400"
                  WindowStartupLocation="CenterOwner"
                  ResizeMode="NoResize">
     <Grid>
