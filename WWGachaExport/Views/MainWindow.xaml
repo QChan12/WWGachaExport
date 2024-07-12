@@ -1,16 +1,18 @@
 ﻿<ui:FluentWindow x:Class="WWGachaExport.Views.MainWindow"
-        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
-        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-        xmlns:local="clr-namespace:WWGachaExport"
-        xmlns:Controls="clr-namespace:WWGachaExport.Controls"
-        xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
-        mc:Ignorable="d"
-        Title="鸣潮抽卡导出工具 v0.0.2" Height="550" Width="900"
-        DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
-        ExtendsContentIntoTitleBar="True"
-        WindowStartupLocation="CenterScreen">
+                 xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                 xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                 xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+                 xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+                 xmlns:local="clr-namespace:WWGachaExport"
+                 xmlns:Controls="clr-namespace:WWGachaExport.Controls"
+                 xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+                 xmlns:md="https://github.com/fantasticfiasco/mvvm-dialogs"
+                 mc:Ignorable="d"
+                 md:DialogServiceViews.IsRegistered="True"
+                 Title="鸣潮抽卡导出工具" Height="550" Width="900"
+                 DataContext="{Binding Source={StaticResource Locator}, Path=MainWindow}"
+                 ExtendsContentIntoTitleBar="True"
+                 WindowStartupLocation="CenterScreen">
     <Grid>
         <Grid.RowDefinitions>
             <RowDefinition Height="auto" />
@@ -19,7 +21,7 @@
         </Grid.RowDefinitions>
         <ui:TitleBar
             x:Name="TitleBar"
-            Title="鸣潮抽卡导出工具 v0.0.2"
+            Title="鸣潮抽卡导出工具 v0.0.3"
             CloseWindowByDoubleClickOnIcon="True">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Assets/Icon.png" />
@@ -31,7 +33,17 @@
                 <ColumnDefinition Width="auto" />
             </Grid.ColumnDefinitions>
             <StackPanel Orientation="Horizontal">
-                <ui:Button Margin="0,0,3,0" Content="更新记录" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding UpdateGachaData}"/>
+                <!--
+                <ui:SplitButton Margin="0,0,3,0" Content="更新记录" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding UpdateGachaData}">
+                    <ui:SplitButton.Flyout>
+                        <ContextMenu>
+                            <MenuItem Header="从URL更新记录" />
+                        </ContextMenu>
+                    </ui:SplitButton.Flyout>
+                </ui:SplitButton>
+                -->
+                <ui:Button Margin="0,0,3,0" Content="更新记录（自动获取）" Icon="{ui:SymbolIcon ArrowClockwise24}" Command="{Binding UpdateGachaData}"/>
+                <ui:Button Margin="0,0,3,0" Content="更新记录（手动获取）" Icon="{ui:SymbolIcon ArrowRotateClockwise24}" Command="{Binding UpdateGachaDataFromUrl}"/>
                 <ui:Button Margin="0,0,3,0" Content="导出记录" Icon="{ui:SymbolIcon FolderArrowUp24}" Command="{Binding ExportGachaData}"/>
                 <ui:Button Content="程序设置" Icon="{ui:SymbolIcon ContentSettings24}" Command="{Binding ConfigCommand}"/>
             </StackPanel>

@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection;
+using MvvmDialogs;
 using System;
 using System.Collections.Generic;
 using System.Configuration;
@@ -23,12 +24,12 @@ namespace WWGachaExport
         {
             Ioc.Default.ConfigureServices(
                 new ServiceCollection()
+                .AddSingleton<IDialogService, DialogService>()
                 .AddSingleton<ConfigService>()
                 .AddSingleton<GameUserService>()
                 .AddSingleton<IContentDialogService, ContentDialogService>()
                 .AddTransient<MainWindowViewModel>()
                 .AddTransient<ConfigWindowViewModel>()
-                .AddTransient<UpdateGachaDataWindowViewModel>()
                 .BuildServiceProvider());
 
             this.InitializeComponent();

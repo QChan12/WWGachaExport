@@ -1,5 +1,6 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using CommunityToolkit.Mvvm.Input;
+using MvvmDialogs;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Ookii.Dialogs.Wpf;
@@ -11,14 +12,17 @@ using System.Reflection;
 using System.Windows;
 using WWGachaExport.Models;
 using WWGachaExport.Services;
+using WWGachaExport.ViewModels.Dialogs;
 using WWGachaExport.Views;
+using WWGachaExport.Views.Dialogs;
 
 namespace WWGachaExport.ViewModels
 {
     public class MainWindowViewModel : ObservableObject
     {
-        private ConfigService _configService;
-        private GameUserService _gameUserService;
+        private readonly ConfigService _configService;
+        private readonly GameUserService _gameUserService;
+        private readonly IDialogService _dialogService;
         private GameUser _selectdUser;
 
         public ObservableCollection<GameUser> Users { get; set; } = new ObservableCollection<GameUser>();
@@ -68,10 +72,32 @@ namespace WWGachaExport.ViewModels
 
         public RelayCommand UpdateGachaData => new RelayCommand(() =>
         {
+            /*
             var window = new UpdateGachaDataWindow();
             window.Owner = Application.Current.MainWindow;
             window.ShowDialog();
             RefreshUsers();
+            */
+
+            _dialogService.ShowDialog(
+                this, 
+                new UpdateGachaDataDialogViewModel(_configService, _gameUserService)
+            );
+            RefreshUsers();
+        });
+
+        public RelayCommand UpdateGachaDataFromUrl => new RelayCommand(() =>
+        {
+            var inputUrlDialogViewModel = new InputUrlDialogViewModel();
+            bool? success = _dialogService.ShowDialog(this, inputUrlDialogViewModel);
+            if (success == true)
+            {
+                _dialogService.ShowDialog(
+                    this, 
+                    new UpdateGachaDataDialogViewModel(_configService, _gameUserService, false, inputUrlDialogViewModel.Url)
+                );
+                RefreshUsers();
+            }
         });
 
         public RelayCommand ExportGachaData => new RelayCommand(async () =>
@@ -168,10 +194,11 @@ namespace WWGachaExport.ViewModels
                 }
             }
         });
-        public MainWindowViewModel(ConfigService configService, GameUserService gameUserService)
+        public MainWindowViewModel(ConfigService configService, GameUserService gameUserService, IDialogService dialogService)
         {
             _configService = configService;
             _gameUserService = gameUserService;
+            _dialogService = dialogService;
             _configService.LoadConfig();
             RefreshUsers();
         }

@@ -62,6 +62,9 @@
     <Reference Include="Microsoft.Extensions.DependencyInjection.Abstractions, Version=8.0.0.0, Culture=neutral, PublicKeyToken=adb9793829ddae60, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.Extensions.DependencyInjection.Abstractions.8.0.0\lib\net462\Microsoft.Extensions.DependencyInjection.Abstractions.dll</HintPath>
     </Reference>
+    <Reference Include="MvvmDialogs, Version=9.1.2.0, Culture=neutral, PublicKeyToken=3d3b9708589bc73e, processorArchitecture=MSIL">
+      <HintPath>..\packages\MvvmDialogs.9.1.2\lib\net462\MvvmDialogs.dll</HintPath>
+    </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
     </Reference>
@@ -119,15 +122,27 @@
     <Compile Include="Models\GachaAPI.cs" />
     <Compile Include="Models\GachaPoolData.cs" />
     <Compile Include="Models\GachaPoolInfo.cs" />
-    <Compile Include="ViewModels\UpdateGachaDataWindowViewModel.cs" />
-    <Compile Include="Views\UpdateGachaDataWindow.xaml.cs">
-      <DependentUpon>UpdateGachaDataWindow.xaml</DependentUpon>
+    <Compile Include="ViewModels\Dialogs\InputUrlDialogViewModel.cs" />
+    <Compile Include="ViewModels\Dialogs\UpdateGachaDataDialogViewModel.cs" />
+    <Compile Include="Views\Dialogs\InputUrlDialog.xaml.cs">
+      <DependentUpon>InputUrlDialog.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\Dialogs\UpdateGachaDataDialog.xaml.cs">
+      <DependentUpon>UpdateGachaDataDialog.xaml</DependentUpon>
     </Compile>
     <Page Include="Controls\GachaPoolControl.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Views\ConfigWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\InputUrlDialog.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\Dialogs\UpdateGachaDataDialog.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -157,10 +172,6 @@
       <DependentUpon>MainWindow.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Page Include="Views\UpdateGachaDataWindow.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

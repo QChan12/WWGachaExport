@@ -13,14 +13,14 @@ using System.Windows.Media.Imaging;
 using System.Windows.Shapes;
 using Wpf.Ui.Controls;
 
-namespace WWGachaExport.Views
+namespace WWGachaExport.Views.Dialogs
 {
     /// <summary>
-    /// UpdateGachaDataWindow.xaml 的交互逻辑
+    /// InputUrlDialog.xaml 的交互逻辑
     /// </summary>
-    public partial class UpdateGachaDataWindow : FluentWindow
+    public partial class InputUrlDialog : FluentWindow
     {
-        public UpdateGachaDataWindow()
+        public InputUrlDialog()
         {
             InitializeComponent();
         }

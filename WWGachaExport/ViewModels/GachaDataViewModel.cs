@@ -38,7 +38,7 @@ namespace WWGachaExport.ViewModels
         {
             get
             {
-                if (GachaData == null)
+                if (GachaData == null || GachaData.Count == 0)
                 {
                     return "未更新";
                 }
