@@ -50,6 +50,7 @@ namespace WWGachaExport.ViewModels.Dialogs
         private async void UpdateGachaData()
         {
             string url = null;
+
             if (_autoUrl) 
             {
                 AddLog("正在获取 URL ...");
@@ -58,9 +59,18 @@ namespace WWGachaExport.ViewModels.Dialogs
                     AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
                     return;
                 }
-                var pathLog = Path.Combine(_configService.PathGame,
-                    @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Mainland\KRSDKRes\KRSDKWebView\debug.log");
-                if (!Directory.Exists(Path.GetDirectoryName(pathLog)))
+                var pathLogCN = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Mainland\KRSDKRes\KRSDKWebView\debug.log");
+                var pathLogGlobal = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Global\KRSDKRes\KRSDKWebView\debug.log");
+                string pathLog = null;
+                if (Directory.Exists(Path.GetDirectoryName(pathLogCN)))
+                {
+                    pathLog = pathLogCN;
+                }
+                else if (Directory.Exists(Path.GetDirectoryName(pathLogGlobal)))
+                {
+                    pathLog = pathLogGlobal;
+                }
+                if (pathLog == null)
                 {
                     AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
                     return;
@@ -86,8 +96,8 @@ namespace WWGachaExport.ViewModels.Dialogs
 
                 foreach (var line in logLines.Reverse())
                 {
-                    if (line.IndexOf("#url\": \"" +
-                        "https://aki-gm-resources.aki-game.com/aki/gacha/index.html#/record?") != -1)
+                    if (line.IndexOf("#url\": \"" + "https://aki-gm-resources.aki-game.com/aki/gacha/index.html#/record?") != -1 ||
+                        line.IndexOf("#url\": \"" + "https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html#/record?") != -1)
                     {
                         Match match = Regex.Match(line, "#url\": \"(.*)\"");
                         if (match.Success)
@@ -153,6 +163,7 @@ namespace WWGachaExport.ViewModels.Dialogs
                     serverArea = param.Split('=')[1];
                 }
             }
+            bool serverCN = serverArea != "global";
             _configService.SelectedUID = playerId;
             _configService.SaveConfig();
 
@@ -184,7 +195,9 @@ namespace WWGachaExport.ViewModels.Dialogs
                     AddLog($"获取池子：{gachaPool.Name}");
 
                     var response = await client.PostAsync(
-                        $"https://gmserver-api.aki-game2.com/gacha/record/query",
+                        serverCN ? 
+                        "https://gmserver-api.aki-game2.com/gacha/record/query" :
+                        "https://gmserver-api.aki-game2.net/gacha/record/query",
                         new StringContent(
                             JsonConvert.SerializeObject(new
                             {

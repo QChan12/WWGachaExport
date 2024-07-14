@@ -21,7 +21,7 @@
         </Grid.RowDefinitions>
         <ui:TitleBar
             x:Name="TitleBar"
-            Title="鸣潮抽卡导出工具 v0.0.3"
+            Title="鸣潮抽卡导出工具 v0.0.4"
             CloseWindowByDoubleClickOnIcon="True">
             <ui:TitleBar.Icon>
                 <ui:ImageIcon Source="pack://application:,,,/Assets/Icon.png" />
