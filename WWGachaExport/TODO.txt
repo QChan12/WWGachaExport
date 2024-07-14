@@ -1,2 +1,60 @@
 ﻿X multi-language
 X character-icon
+
+
+ConfigWindow_DeleteUser	删除记录：	
+ConfigWindow_GamePath	游戏路径：	
+ConfigWindow_IgnoreNoobPool	隐藏新手池：	
+ConfigWindow_IgnoreNoobPool_Off	关闭	
+ConfigWindow_IgnoreNoobPool_On	开启	
+ConfigWindow_RemoveUser_Cancel	取消	
+ConfigWindow_RemoveUser_Confirm	删除	
+ConfigWindow_RemoveUser_Content	你确定要删除 uid：{0} 的记录吗？	
+ConfigWindow_RemoveUser_Title	删除记录	
+ConfigWindow_SelectPath_Description	请选择游戏根目录	
+ConfigWindow_Title	程序设置	
+DataFormat	yyyy/MM/dd	
+DataFormat_Full	yyyy/MM/dd hh:mm:ss	
+ExportGachaData_Faild_Button	确定	
+ExportGachaData_Faild_Content	数据导出失败，请检查要保存的位置是否被占用。	
+ExportGachaData_Faild_Title	提示	
+ExportGachaData_Sheet_Count	次数	
+ExportGachaData_Sheet_FiveCurrentCount	保底	
+ExportGachaData_Sheet_Level	品级	
+ExportGachaData_Sheet_Name	名称	
+ExportGachaData_Sheet_Time	时间	
+ExportGachaData_Sheet_Type	类别	
+ExportGachaData_Success_Button	确定	
+ExportGachaData_Success_Content	数据导出完成。	
+ExportGachaData_Success_Title	提示	
+GachaData_NotUpdated	未更新	
+GachaPoolControl_LevelFive	五星：	
+GachaPoolControl_LevelFive_Separator	五星记录	
+GachaPoolControl_LevelFiveAverageCount	五星平均次数：	
+GachaPoolControl_LevelFiveCurrentCount	距离五星：	
+GachaPoolControl_LevelFour	四星：	
+GachaPoolControl_LevelFourCurrentCount	距离四星：	
+GachaPoolControl_LevelThree	三星：	
+GachaPoolControl_TotalCount	总共抽取：	
+GachaPoolControl_TotalCount_Unit	次	
+InputUrlDialog_Confirm	确定	
+InputUrlDialog_Title	更新记录（手动获取）	
+InputUrlDialog_Url	URL链接：	
+MainWindow_CurrentUser	当前账号：	
+MainWindow_Settings	程序设置	
+MainWindow_Title	鸣潮抽卡导出工具	
+MainWindow_UpdateGachaData_Auto	更新记录（自动获取）	
+MainWindow_UpdateGachaData_InputUrl	更新记录（手动获取）	
+UpdateGachaDataDialog_Tip_GamePathError	游戏路径设置有误，请检查程序设置中的游戏路径。	
+UpdateGachaDataDialog_Tip_GetGachaPool	获取池子：{0}	
+UpdateGachaDataDialog_Tip_GetGachaPool_Faild	获取失败：{0}	
+UpdateGachaDataDialog_Tip_GetGachaPool_Success	获取完成, 正在保存记录...	
+UpdateGachaDataDialog_Tip_GetUrl	正在获取 URL ...	
+UpdateGachaDataDialog_Tip_InputUrl_Handle	正在处理手动输入的 url ...	
+UpdateGachaDataDialog_Tip_InputUrl_Handle_Faild	获取失败，输入的 url 地址有误。	
+UpdateGachaDataDialog_Tip_Log_GetFaild	获取失败，请在游戏中打开抽卡历史记录后重试。	
+UpdateGachaDataDialog_Tip_Log_LoadFaild	获取失败，请关闭游戏中的抽卡历史记录后重试。	
+UpdateGachaDataDialog_Tip_Log_LoadSuccess	获取成功，开始获取抽卡数据。	
+UpdateGachaDataDialog_Tip_UpdateData_Faild	记录保存失败	
+UpdateGachaDataDialog_Tip_UpdateData_Success	更新完成	
+UpdateGachaDataDialog_Title	更新记录	
