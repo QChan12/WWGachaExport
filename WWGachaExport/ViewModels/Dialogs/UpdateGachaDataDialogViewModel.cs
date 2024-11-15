@@ -61,6 +61,7 @@ namespace WWGachaExport.ViewModels.Dialogs
                 }
                 var pathLogCN = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Mainland\KRSDKRes\KRSDKWebView\debug.log");
                 var pathLogGlobal = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Global\KRSDKRes\KRSDKWebView\debug.log");
+                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client\Binaries\Win64\ThirdParty\KrPcSdk_Mainland\KRSDKRes\KRSDKWebView\debug.log");
                 string pathLog = null;
                 if (Directory.Exists(Path.GetDirectoryName(pathLogCN)))
                 {
@@ -69,6 +70,10 @@ namespace WWGachaExport.ViewModels.Dialogs
                 else if (Directory.Exists(Path.GetDirectoryName(pathLogGlobal)))
                 {
                     pathLog = pathLogGlobal;
+                }
+                else if (Directory.Exists(Path.GetDirectoryName(pathLogWeGame)))
+                {
+                    pathLog = pathLogWeGame;
                 }
                 if (pathLog == null)
                 {
@@ -187,11 +192,20 @@ namespace WWGachaExport.ViewModels.Dialogs
                 }
             }
 
+            if (_configService.HiddenNoobPool)
+            {
+                AddLog($"由于设置原因，本次获取跳过新手池");
+            }
+
+
             using (var client = new HttpClient())
             {
                 client.DefaultRequestHeaders.Add("User-Agent", "mozilla/5.0 (windows nt 6.2; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/92.0.4515.107 safari/537.36");
                 foreach (var gachaPool in _configService.GachaPools)
                 {
+                    if (gachaPool.NoobPool && _configService.HiddenNoobPool)
+                        continue;
+
                     AddLog($"获取池子：{gachaPool.Name}");
 
                     var response = await client.PostAsync(
