@@ -59,9 +59,9 @@ namespace WWGachaExport.ViewModels.Dialogs
                     AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
                     return;
                 }
-                var pathLogCN = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Mainland\KRSDKRes\KRSDKWebView\debug.log");
-                var pathLogGlobal = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Binaries\Win64\ThirdParty\KrPcSdk_Global\KRSDKRes\KRSDKWebView\debug.log");
-                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client\Binaries\Win64\ThirdParty\KrPcSdk_Mainland\KRSDKRes\KRSDKWebView\debug.log");
+                var pathLogCN = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
+                var pathLogGlobal = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
+                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client/Saved/Logs/Client.log");
                 string pathLog = null;
                 if (Directory.Exists(Path.GetDirectoryName(pathLogCN)))
                 {
@@ -94,21 +94,17 @@ namespace WWGachaExport.ViewModels.Dialogs
                         logLines = sr.ReadToEnd().Split('\n');
                     }
                 }
-                catch
+                catch (Exception e)
                 {
-                    AddLog("获取失败，请关闭游戏中的抽卡历史记录后重试。");
+                    AddLog("获取失败，请关闭游戏中的抽卡历史记录后重试。" + e.Message);
                 }
 
                 foreach (var line in logLines.Reverse())
                 {
-                    if (line.IndexOf("#url\": \"" + "https://aki-gm-resources.aki-game.com/aki/gacha/index.html#/record?") != -1 ||
-                        line.IndexOf("#url\": \"" + "https://aki-gm-resources-oversea.aki-game.net/aki/gacha/index.html#/record?") != -1)
+                    var match = Regex.Match(line, "(https://.*/aki/gacha/index.html#/record[\\w\\-?=&]+)");
+                    if (match.Success)
                     {
-                        Match match = Regex.Match(line, "#url\": \"(.*)\"");
-                        if (match.Success)
-                        {
-                            url = match.Groups[1].Value;
-                        }
+                        url = match.Groups[1].Value;
                         break;
                     }
                 }
@@ -200,7 +196,7 @@ namespace WWGachaExport.ViewModels.Dialogs
 
             using (var client = new HttpClient())
             {
-                client.DefaultRequestHeaders.Add("User-Agent", "mozilla/5.0 (windows nt 6.2; win64; x64) applewebkit/537.36 (khtml, like gecko) chrome/92.0.4515.107 safari/537.36");
+                client.DefaultRequestHeaders.Add("User-Agent", "Mozilla/5.0 (Windows NT 6.2; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/92.0.4515.107 Safari/537.36");
                 foreach (var gachaPool in _configService.GachaPools)
                 {
                     if (gachaPool.NoobPool && _configService.HiddenNoobPool)
