@@ -59,17 +59,12 @@ namespace WWGachaExport.ViewModels.Dialogs
                     AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
                     return;
                 }
-                var pathLogCN = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
-                var pathLogGlobal = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
-                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client/Saved/Logs/Client.log");
+                var pathLogOfficial = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
+                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client\Saved\Logs\Client.log");
                 string pathLog = null;
-                if (Directory.Exists(Path.GetDirectoryName(pathLogCN)))
+                if (Directory.Exists(Path.GetDirectoryName(pathLogOfficial)))
                 {
-                    pathLog = pathLogCN;
-                }
-                else if (Directory.Exists(Path.GetDirectoryName(pathLogGlobal)))
-                {
-                    pathLog = pathLogGlobal;
+                    pathLog = pathLogOfficial;
                 }
                 else if (Directory.Exists(Path.GetDirectoryName(pathLogWeGame)))
                 {
@@ -77,31 +72,31 @@ namespace WWGachaExport.ViewModels.Dialogs
                 }
                 if (pathLog == null)
                 {
-                    AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
+                    AddLog("未找到对应路径，请检查程序设置中的游戏路径。");
                     return;
                 }
                 if (!File.Exists(pathLog))
                 {
-                    AddLog("获取失败，请在游戏中打开抽卡历史记录后重试。");
+                    AddLog("找不到 Log 文件，请在游戏中打开抽卡历史记录后重试。");
                     return;
                 }
                 string[] logLines = null;
                 try
                 {
                     using (var fs = new FileStream(pathLog, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (var sr = new StreamReader(fs, Encoding.Default))
+                    using (var sr = new StreamReader(fs, Encoding.UTF8))
                     {
                         logLines = sr.ReadToEnd().Split('\n');
                     }
                 }
                 catch (Exception e)
                 {
-                    AddLog("获取失败，请关闭游戏中的抽卡历史记录后重试。" + e.Message);
+                    AddLog("读取 Log 文件失败，请关闭游戏中的抽卡历史记录后重试。" + e.Message);
                 }
 
                 foreach (var line in logLines.Reverse())
                 {
-                    var match = Regex.Match(line, "(https://.*/aki/gacha/index.html#/record[\\w\\-?=&]+)");
+                    var match = Regex.Match(line, "(https?.*/aki/gacha/index\\.html#/record[\\?=&\\w\\-]+)");
                     if (match.Success)
                     {
                         url = match.Groups[1].Value;
@@ -110,7 +105,7 @@ namespace WWGachaExport.ViewModels.Dialogs
                 }
                 if (string.IsNullOrWhiteSpace(url))
                 {
-                    AddLog("获取失败，请在游戏中打开抽卡历史记录后重试。");
+                    AddLog("无法从 Log 文件中获取 Url，请在游戏中打开抽卡历史记录后重试。");
                     return;
                 }
                 AddLog("获取成功，开始获取抽卡数据。");
@@ -222,15 +217,6 @@ namespace WWGachaExport.ViewModels.Dialogs
                             "application/json"
                         )
                     );
-                    var json = JsonConvert.SerializeObject(new
-                    {
-                        cardPoolId,
-                        cardPoolType = gachaPool.PoolType,
-                        languageCode,
-                        playerId,
-                        recordId,
-                        serverId
-                    });
 
                     var getSuccess = false;
                     if (response.IsSuccessStatusCode)

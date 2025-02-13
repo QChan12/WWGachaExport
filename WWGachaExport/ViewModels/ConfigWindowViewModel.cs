@@ -91,6 +91,99 @@ namespace WWGachaExport.ViewModels
             }
         });
 
+        public RelayCommand FixEngineConfig => new RelayCommand(async () =>
+        {
+            if (string.IsNullOrEmpty(_configService.PathGame) || !Directory.Exists(_configService.PathGame))
+            {
+                await new Wpf.Ui.Controls.MessageBox
+                {
+                    Title = "提示",
+                    Content = "游戏路径未设置，请先设置游戏路径。",
+                    CloseButtonText = "确定",
+                    IsPrimaryButtonEnabled = false
+                }.ShowDialogAsync();
+                return;
+            }
+            var pathOfficial = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Config\WindowsNoEditor\Engine.ini");
+            var pathWeGame = Path.Combine(_configService.PathGame, @"Client\Saved\Config\WindowsNoEditor\Engine.ini");
+            string pathConfig = null;
+            if (Directory.Exists(Path.GetDirectoryName(pathOfficial)))
+            {
+                pathConfig = pathOfficial;
+            }
+            else if (Directory.Exists(Path.GetDirectoryName(pathWeGame)))
+            {
+                pathConfig = pathWeGame;
+            }
+            if (pathConfig == null || !File.Exists(pathConfig))
+            {
+                await new Wpf.Ui.Controls.MessageBox
+                {
+                    Title = "提示",
+                    Content = "未找到对应路径，请检查程序设置中的游戏路径。",
+                    CloseButtonText = "确定",
+                    IsPrimaryButtonEnabled = false
+                }.ShowDialogAsync();
+                return;
+            }
+
+            string[] configLines = null;
+            try
+            {
+                configLines = File.ReadAllLines(pathConfig, Encoding.UTF8);
+            }
+            catch
+            {
+                await new Wpf.Ui.Controls.MessageBox
+                {
+                    Title = "提示",
+                    Content = "配置文件被占用，请关闭游戏后重试。",
+                    CloseButtonText = "确定",
+                    IsPrimaryButtonEnabled = false
+                }.ShowDialogAsync();
+                return;
+            }
+
+            StringBuilder outputConfig = new StringBuilder();
+            string tag = null;
+            foreach (var line in configLines)
+            {
+                if (line.StartsWith("["))
+                {
+                    tag = line;
+                }
+                if (tag != "[Core.Log]" || !line.ToLower().StartsWith("global=") && !line.ToLower().StartsWith("loginteractiveprocess="))
+                {
+                    outputConfig.AppendLine(line);
+                }
+            }
+
+            try
+            {
+                File.WriteAllText(pathConfig, outputConfig.ToString());
+            }
+            catch
+            {
+                await new Wpf.Ui.Controls.MessageBox
+                {
+                    Title = "提示",
+                    Content = "修改配置文件失败，请关闭游戏后重试。",
+                    CloseButtonText = "确定",
+                    IsPrimaryButtonEnabled = false
+                }.ShowDialogAsync();
+            }
+            finally
+            {
+                await new Wpf.Ui.Controls.MessageBox
+                {
+                    Title = "提示",
+                    Content = "修改配置文件完成。",
+                    CloseButtonText = "确定",
+                    IsPrimaryButtonEnabled = false
+                }.ShowDialogAsync();
+            }
+        });
+
         public ConfigWindowViewModel(ConfigService configService, GameUserService gameUserService) 
         {
             _configService = configService;
