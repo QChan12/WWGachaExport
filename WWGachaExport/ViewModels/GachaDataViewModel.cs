@@ -54,9 +54,18 @@ namespace WWGachaExport.ViewModels
                 if (this.GachaData == null || this.GachaData.Count == 0)
                     return 0;
 
+                var records = this.GachaData.Reverse().ToList();
+                if (records.Count() == 0)
+                    return 0;
+
+                var inherit = _configService.GachaPools.FirstOrDefault(x => x.PoolType == this.PoolType)?.Inherit ?? true;
+                var currentCardPoolId = records[0].CardPoolId;
                 var count = 0;
-                foreach (var data in this.GachaData.Reverse())
+                foreach (var data in records)
                 {
+                    if (!inherit && data.CardPoolId != currentCardPoolId)
+                        break;
+
                     if (data.QualityLevel == 5)
                         break;
 
@@ -65,6 +74,7 @@ namespace WWGachaExport.ViewModels
                 return count;
             }
         }
+
         public int LevelFourCurrentCount
         {
             get
@@ -72,9 +82,18 @@ namespace WWGachaExport.ViewModels
                 if (this.GachaData == null || this.GachaData.Count == 0)
                     return 0;
 
+                var records = this.GachaData.Reverse().ToList();
+                if (records.Count() == 0)
+                    return 0;
+
+                var inherit = _configService.GachaPools.FirstOrDefault(x => x.PoolType == this.PoolType)?.Inherit ?? true;
+                var currentCardPoolId = records[0].CardPoolId;
                 var count = 0;
-                foreach (var data in this.GachaData.Reverse())
+                foreach (var data in records)
                 {
+                    if (!inherit && data.CardPoolId != currentCardPoolId)
+                        break;
+
                     if (data.QualityLevel == 4 || data.QualityLevel == 5)
                         break;
 

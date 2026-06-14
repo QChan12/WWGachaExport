@@ -13,14 +13,16 @@ namespace WWGachaExport.Models
         public bool NoobPool;
         public int LevelFiveMaxDraw;
         public int LevelFourMaxDraw;
+        public bool Inherit;
 
-        public GachaPoolInfo(int poolType, string name, bool noobPool, int levelFiveMaxDraw, int levelFourMaxDraw)
+        public GachaPoolInfo(int poolType, string name, bool noobPool, int levelFiveMaxDraw, int levelFourMaxDraw, bool inherit = true)
         {
             PoolType = poolType;
             Name = name;
             NoobPool = noobPool;
             LevelFiveMaxDraw = levelFiveMaxDraw;
             LevelFourMaxDraw = levelFourMaxDraw;
+            Inherit = inherit;
         }
     }
 }

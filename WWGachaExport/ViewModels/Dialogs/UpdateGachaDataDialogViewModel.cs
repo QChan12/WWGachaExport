@@ -1,11 +1,14 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using MvvmDialogs;
 using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
 using System;
+using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Management;
 using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -54,58 +57,47 @@ namespace WWGachaExport.ViewModels.Dialogs
             if (_autoUrl) 
             {
                 AddLog("正在获取 URL ...");
-                if (string.IsNullOrEmpty(_configService.PathGame) || !Directory.Exists(_configService.PathGame))
-                {
-                    AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
-                    return;
-                }
-                var pathLogOfficial = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
-                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client\Saved\Logs\Client.log");
-                string pathLog = null;
-                if (Directory.Exists(Path.GetDirectoryName(pathLogOfficial)))
-                {
-                    pathLog = pathLogOfficial;
-                }
-                else if (Directory.Exists(Path.GetDirectoryName(pathLogWeGame)))
-                {
-                    pathLog = pathLogWeGame;
-                }
-                if (pathLog == null)
-                {
-                    AddLog("未找到对应路径，请检查程序设置中的游戏路径。");
-                    return;
-                }
-                if (!File.Exists(pathLog))
-                {
-                    AddLog("找不到 Log 文件，请在游戏中打开抽卡历史记录后重试。");
-                    return;
-                }
-                string[] logLines = null;
                 try
                 {
-                    using (var fs = new FileStream(pathLog, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
-                    using (var sr = new StreamReader(fs, Encoding.UTF8))
+                    var commandLine = "";
+                    string query = "SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name = 'KRWebView.exe'";
+                    using (var searcher = new ManagementObjectSearcher(query))
                     {
-                        logLines = sr.ReadToEnd().Split('\n');
-                    }
-                }
-                catch (Exception e)
-                {
-                    AddLog("读取 Log 文件失败，请关闭游戏中的抽卡历史记录后重试。" + e.Message);
-                }
+                        foreach (ManagementObject obj in searcher.Get())
+                        {
+                            string cmd = obj["CommandLine"]?.ToString() ?? "";
+                            if (cmd.Contains("--type"))
+                                continue;
 
-                foreach (var line in logLines.Reverse())
-                {
-                    var match = Regex.Match(line, "(https?.*/aki/gacha/index\\.html#/record[\\?=&\\w\\-]+)");
-                    if (match.Success)
-                    {
-                        url = match.Groups[1].Value;
-                        break;
+                            var index = cmd.LastIndexOf("\" ");
+                            if (index == -1)
+                                continue;
+
+                            commandLine = cmd.Substring(index + 2).Replace(".", "=");
+                            break;
+                        }
                     }
+
+                    if (string.IsNullOrEmpty(commandLine))
+                    {
+                        AddLog("获取命令行失败，可能未以管理员模式启动本程序。");
+                        AddLog("如果以管理员身份开启，请在游戏内重新打开抽卡页面。");
+                        return;
+                    }
+                    JObject jsonObj = JObject.Parse(
+                        Encoding.UTF8.GetString(
+                            Convert.FromBase64String(commandLine)
+                        )
+                    );
+                    url = jsonObj["url"]?.ToString();
                 }
-                if (string.IsNullOrWhiteSpace(url))
+                catch (Exception ex) {
+                    AddLog("获取 Url 出现异常。");
+                    AddLog($"Exception: {ex.Message}");
+                }
+                if (string.IsNullOrEmpty(url))
                 {
-                    AddLog("无法从 Log 文件中获取 Url，请在游戏中打开抽卡历史记录后重试。");
+                    AddLog("获取 Url 失败，可能鸣潮更新变动。");
                     return;
                 }
                 AddLog("获取成功，开始获取抽卡数据。");
@@ -238,6 +230,15 @@ namespace WWGachaExport.ViewModels.Dialogs
                                 DateTime lastTime = DateTime.MinValue;
 
                                 var gachaPoolData = user.GachaPoolData.FirstOrDefault(x => x.PoolType == gachaPool.PoolType);
+                                if (gachaPoolData == null)
+                                {
+                                    gachaPoolData = new GachaPoolData
+                                    {
+                                        PoolType = gachaPool.PoolType,
+                                        Data = new List<GachaData>()
+                                    };
+                                    user.GachaPoolData.Add(gachaPoolData);
+                                }
                                 if (gachaPoolData.Data.Count > 0)
                                 {
                                     lastTime = gachaPoolData.Data.Last().Time;
@@ -252,6 +253,7 @@ namespace WWGachaExport.ViewModels.Dialogs
                                     gachaPoolData.Data.Add(new GachaData
                                     {
                                         CardPoolType = item.CardPoolType,
+                                        CardPoolId = cardPoolId,
                                         ResourceId = item.ResourceId,
                                         QualityLevel = item.QualityLevel,
                                         ResourceType = item.ResourceType,
@@ -265,11 +267,14 @@ namespace WWGachaExport.ViewModels.Dialogs
                         catch (Exception e)
                         {
                             AddLog(e.Message);
+                            AddLog(e.StackTrace);
+                            return;
                         }
                     }
                     if (!getSuccess)
                     {
                         AddLog($"获取失败：{gachaPool.Name}");
+                        return;
                     }
                 }
             }

@@ -10,5 +10,5 @@ namespace WWGachaExport.Models
     {
         public int PoolType { get; set; }
         public List<GachaData> Data { get; set; }
-}
+    }
 }

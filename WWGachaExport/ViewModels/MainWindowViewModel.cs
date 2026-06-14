@@ -4,6 +4,7 @@ using MvvmDialogs;
 using OfficeOpenXml;
 using OfficeOpenXml.Style;
 using Ookii.Dialogs.Wpf;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Diagnostics;
 using System.IO;
@@ -140,8 +141,15 @@ namespace WWGachaExport.ViewModels
                         workSheet.Cells[1, 6].Value = "保底";
 
                         int row = 2, count = 1, fiveCurrentCount = 1;
+                        var inherit = _configService.GachaPools.FirstOrDefault(x => x.PoolType == poolData.PoolType)?.Inherit ?? true;
+                        string prevCardPoolId = null;
                         foreach (var gachaData in poolData.Data)
                         {
+                            if (!inherit && prevCardPoolId != null && gachaData.CardPoolId != prevCardPoolId)
+                            {
+                                fiveCurrentCount = 1;
+                            }
+
                             if (gachaData.QualityLevel == 5)
                             {
                                 workSheet.Cells[row, 1, row, 6].Style.Font.Bold = true;
@@ -157,7 +165,7 @@ namespace WWGachaExport.ViewModels
                                 workSheet.Cells[row, 1, row, 6].Style.Font.Color.SetColor(System.Drawing.Color.FromArgb(128, 128, 128));
                             }
 
-                            workSheet.Cells[row, 1].Value = gachaData.Time.ToString("yyyy/MM/dd hh:mm:ss");
+                            workSheet.Cells[row, 1].Value = gachaData.Time.ToString("yyyy/MM/dd HH:mm:ss");
                             workSheet.Cells[row, 2].Value = gachaData.ResourceType;
                             workSheet.Cells[row, 3].Value = gachaData.Name;
                             workSheet.Cells[row, 4].Value = gachaData.QualityLevel;
@@ -165,12 +173,13 @@ namespace WWGachaExport.ViewModels
                             workSheet.Cells[row, 6].Value = fiveCurrentCount;
                             row++;
                             count++;
-                            fiveCurrentCount++;
 
                             if (gachaData.QualityLevel == 5)
-                            {
                                 fiveCurrentCount = 1;
-                            }
+                            else
+                                fiveCurrentCount++; 
+
+                            prevCardPoolId = gachaData.CardPoolId;
                         }
                     }
                     excel.Save();

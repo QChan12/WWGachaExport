@@ -33,8 +33,12 @@ namespace WWGachaExport.Services
             new GachaPoolInfo(5, "新手唤取", true, 50, 10),
             new GachaPoolInfo(6, "新手自选唤取", true, 80, 10),
             new GachaPoolInfo(7, "新手自选唤取（感恩定向唤取）", true, 1, 10),
-        };
-        
+            new GachaPoolInfo(8, "角色新旅唤取", true, 80, 10),
+            new GachaPoolInfo(9, "武器新旅唤取", true, 80, 10),
+            new GachaPoolInfo(10, "角色联动唤取", false, 80, 10, false),
+            new GachaPoolInfo(11, "武器联动唤取", false, 80, 10, false),
+       };
+
         public ConfigService() 
         {
             //LoadConfig();

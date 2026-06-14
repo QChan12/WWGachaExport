@@ -9,6 +9,7 @@ namespace WWGachaExport.Models
     public class GachaData
     {
         public string CardPoolType { get; set; }
+        public string CardPoolId { get; set; }
         public int ResourceId { get; set; }
         public int QualityLevel { get; set; } 
         public string ResourceType { get; set; }
