@@ -13,6 +13,7 @@ using System.Net.Http;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
+using WWGachaExport.Helpers;
 using WWGachaExport.Models;
 using WWGachaExport.Services;
 
@@ -57,47 +58,87 @@ namespace WWGachaExport.ViewModels.Dialogs
             if (_autoUrl) 
             {
                 AddLog("正在获取 URL ...");
+                if (string.IsNullOrEmpty(_configService.PathGame) || !Directory.Exists(_configService.PathGame))
+                {
+                    AddLog("游戏路径设置有误，请检查程序设置中的游戏路径。");
+                    return;
+                }
+                var pathLogOfficial = Path.Combine(_configService.PathGame, @"Wuthering Waves Game\Client\Saved\Logs\Client.log");
+                var pathLogWeGame = Path.Combine(_configService.PathGame, @"Client\Saved\Logs\Client.log");
+                string pathLog = null;
+                if (Directory.Exists(Path.GetDirectoryName(pathLogOfficial)))
+                {
+                    pathLog = pathLogOfficial;
+                }
+                else if (Directory.Exists(Path.GetDirectoryName(pathLogWeGame)))
+                {
+                    pathLog = pathLogWeGame;
+                }
+                if (pathLog == null)
+                {
+                    AddLog("未找到对应路径，请检查程序设置中的游戏路径。");
+                    return;
+                }
+                if (!File.Exists(pathLog))
+                {
+                    AddLog("找不到 Log 文件，请在游戏中打开抽卡历史记录后重试。");
+                    return;
+                }
+                byte[] encrypted = null;
                 try
                 {
-                    var commandLine = "";
-                    string query = "SELECT ProcessId, CommandLine FROM Win32_Process WHERE Name = 'KRWebView.exe'";
-                    using (var searcher = new ManagementObjectSearcher(query))
+                    using (var fs = new FileStream(pathLog, FileMode.Open, FileAccess.Read, FileShare.ReadWrite))
                     {
-                        foreach (ManagementObject obj in searcher.Get())
+                        encrypted = new byte[fs.Length];
+                        int offset = 0;
+                        while (offset < encrypted.Length)
                         {
-                            string cmd = obj["CommandLine"]?.ToString() ?? "";
-                            if (cmd.Contains("--type"))
-                                continue;
-
-                            var index = cmd.LastIndexOf("\" ");
-                            if (index == -1)
-                                continue;
-
-                            commandLine = cmd.Substring(index + 2).Replace(".", "=");
-                            break;
+                            int read = fs.Read(encrypted, offset, encrypted.Length - offset);
+                            if (read == 0) break;
+                            offset += read;
                         }
+                        if (offset != encrypted.Length)
+                            Array.Resize(ref encrypted, offset);
                     }
-
-                    if (string.IsNullOrEmpty(commandLine))
-                    {
-                        AddLog("获取命令行失败，可能未以管理员模式启动本程序。");
-                        AddLog("如果以管理员身份开启，请在游戏内重新打开抽卡页面。");
-                        return;
-                    }
-                    JObject jsonObj = JObject.Parse(
-                        Encoding.UTF8.GetString(
-                            Convert.FromBase64String(commandLine)
-                        )
-                    );
-                    url = jsonObj["url"]?.ToString();
                 }
-                catch (Exception ex) {
-                    AddLog("获取 Url 出现异常。");
-                    AddLog($"Exception: {ex.Message}");
-                }
-                if (string.IsNullOrEmpty(url))
+                catch (Exception e)
                 {
-                    AddLog("获取 Url 失败，可能鸣潮更新变动。");
+                    AddLog("读取 Log 文件失败，请关闭游戏中的抽卡历史记录后重试。" + e.Message);
+                }
+
+                if (encrypted == null || encrypted.Length <= 3)
+                {
+                    AddLog("Log 文件内容过短，无法解密。");
+                    return;
+                }
+
+                var decoded = new byte[encrypted.Length - 3];
+                for (int i = 3; i < encrypted.Length; i++)
+                {
+                    byte b = encrypted[i];
+
+                    if ((b & 1) == 1)
+                        b ^= 0xA5;
+                    else
+                        b ^= 0xEF;
+
+                    decoded[i - 3] = b;
+                }
+
+                string logText = Encoding.UTF8.GetString(decoded);
+                var logLines = logText.Split('\n');
+                foreach (var line in logLines.Reverse())
+                {
+                    var match = Regex.Match(line, "(https?.*/aki/gacha/index\\.html#/record[\\?=&\\w\\-]+)");
+                    if (match.Success)
+                    {
+                        url = match.Groups[1].Value;
+                        break;
+                    }
+                }
+                if (string.IsNullOrWhiteSpace(url))
+                {
+                    AddLog("无法从 Log 文件中获取 Url，请在游戏中打开抽卡历史记录后重试。");
                     return;
                 }
                 AddLog("获取成功，开始获取抽卡数据。");
